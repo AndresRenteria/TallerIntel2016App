@@ -1,8 +1,9 @@
 package com.example.diego.class9v2;
 
+import android.content.Intent;
 import android.graphics.Color;
-import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -17,14 +18,14 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.PolygonOptions;
-import com.google.android.gms.maps.model.Polyline;
-import com.google.android.gms.maps.model.PolylineOptions;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,GoogleMap.OnMarkerClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,GoogleMap.OnMarkerClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, GoogleMap.OnMapClickListener {
 
     private GoogleMap mMap;
     private GoogleApiClient googleApiClient;
     private LocationServices request;
+    private final int CODE = 0;
+
 
     //FUSED: location services
 
@@ -54,6 +55,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      * it inside the SupportMapFragment. This method will only be triggered once the user has
      * installed Google Play services and returned to the app.
      */
+
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -66,6 +69,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.addMarker(new MarkerOptions().position(classroom).title("Classroom :v"));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(classroom, 15));
         mMap.setOnMarkerClickListener(this);
+        mMap.setOnMapClickListener(this);
 
         PolygonOptions zona1 = new PolygonOptions()
                 .add(new LatLng(20.733939, -103.45430),
@@ -75,10 +79,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         new LatLng(20.733939, -103.454331))
                 .fillColor(Color.argb(90,255,0,0))
                 .strokeColor(Color.argb(150,255, 0,0));
-
-
-// Get back the mutable Polygon
+        // Get back the mutable Polygon
         Polygon polygon = mMap.addPolygon(zona1);
+        polygon.setClickable(true);
 
 
         PolygonOptions zona2 = new PolygonOptions()
@@ -90,11 +93,53 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 )
                 .fillColor(Color.argb(90,0,0,255))
                 .strokeColor(Color.argb(0,0,0,255));
+        Polygon polygon2 = mMap.addPolygon(zona2);
+        polygon2.setClickable(true);
+
+        PolygonOptions zona3 = new PolygonOptions()
+                .add(new LatLng(20.732887, -103.455049),
+                        new LatLng(20.732887, -103.455049),
+                        new LatLng(20.732832, -103.454572),
+                        new LatLng(20.731643, -103.454760),
+                        new LatLng(20.731894, -103.456021),
+                        new LatLng(20.732461, -103.455978),
+                        new LatLng(20.732441, -103.455603)
+                )
+                .fillColor(Color.argb(90,0,0,255))
+                .strokeColor(Color.argb(0, 0, 0, 255));
+        Polygon polygon3 = mMap.addPolygon(zona3);
+        polygon3.setClickable(true);
+
+        PolygonOptions zona4 = new PolygonOptions()
+                .add(new LatLng(20.732933, -103.457218),
+                        new LatLng(20.732933,-103.457218),
+                        new LatLng(20.732211, -103.456038),
+                        new LatLng(20.731915, -103.456108),
+                        new LatLng(20.732116, -103.456923),
+                        new LatLng(20.732557, -103.457256)
+                )
+                .fillColor(Color.argb(90,0,0,255))
+                .strokeColor(Color.argb(0, 255, 0, 0));
 
         ;
+        Polygon polygon4 = mMap.addPolygon(zona4);
+        polygon4.setClickable(true);
 
-        Polygon polygon2 = mMap.addPolygon(zona2);
+        mMap.setOnPolygonClickListener(new GoogleMap.OnPolygonClickListener() {
+            public void onPolygonClick(Polygon poly) {
 
+                Log.e("click", poly.getId().toString());
+                changeActivity(poly.getId().toString());
+
+            }
+        });
+    }
+
+    public void changeActivity(String s)
+    {
+        Intent intent = new Intent(this, MainActivity2.class);
+        intent.putExtra("Input",s);
+        startActivityForResult(intent, CODE);
     }
 
     @Override
@@ -115,6 +160,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
+
+    }
+
+    @Override
+    public void onMapClick(LatLng latLng) {
 
     }
 }
